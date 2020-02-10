@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="Bank Card Encryption - Client" Height="340" Width="400">
+        Title="Bank Card Encryption - Client" Height="400" Width="400">
     <Grid>
         <StackPanel Margin="10">
             <TextBlock Text="Account login" Margin="5 15 5 5" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#42c2f5"/>
@@ -22,6 +22,7 @@
             <PasswordBox Margin="5" Padding="5"  FontSize="14"/>
             <Separator Margin="5 15 5 5"/>
             <Button x:Name="btnLogin" Content="Login" Margin="5 15 5 5" Padding="5" Background="#42c2f5" Foreground="White" FontSize="20" BorderThickness="0" Cursor="Hand"/>
+            <TextBox Margin="5 15 5 5" Padding="5" x:Name="txtDisplay"/>
         </StackPanel>
 
 

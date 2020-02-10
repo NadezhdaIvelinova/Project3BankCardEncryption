@@ -31,6 +31,11 @@ namespace Server
         public MainWindow()
         {
             InitializeComponent();
+
+            writers = new Dictionary<Thread, BinaryWriter>();
+            incomingThread = new Thread(new ThreadStart(RunServer));
+            incomingThread.Start();
+            connections = new Dictionary<Thread, Socket>();
         }
 
         public void RunServer()
@@ -47,7 +52,14 @@ namespace Server
                 listener.Start();
 
                 //Establish connection upon client request
-                
+                while(true)
+                {
+                    DisplayMessage("Waiting for connection...\r\n");
+                    //Accept incoming connection
+                    Socket connection = listener.AcceptSocket();
+
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(RunInThread), connection);
+                }                
             }
             catch(Exception exception)
             {
@@ -55,7 +67,7 @@ namespace Server
             }
         }
 
-        public void RunInThread(object socket)
+        private void RunInThread(object socket)
         {
             Socket connection = (Socket)socket;
             NetworkStream socketStream = new NetworkStream(connection);
@@ -71,6 +83,38 @@ namespace Server
                 counter++;
                 DisplayMessage("Connection " + counter + " received.\r\n");
             }
+
+            //Inform client that connection was successful
+            writer.Write("SERVER>>> Connection successful");
+
+            string clientReply = "";
+
+            //Read string data sent from client
+            do
+            {
+                try
+                {
+                    clientReply = reader.ReadString();
+
+                    DisplayMessage("\r\n" + clientReply);
+                }
+                catch (Exception)
+                {
+                    break;
+                }
+            } while (clientReply != "CLIENT>>> TERMINATE" && connection.Connected);
+            lock(this)
+            {
+                counter--;
+                DisplayMessage("\r\nUser terminated connection\r\n");
+                writers.Remove(Thread.CurrentThread);
+                connections.Remove(Thread.CurrentThread);
+            }
+            //Close connection
+            writer?.Close();
+            reader?.Close();
+            socketStream?.Close();
+            connection?.Close();
         }
 
         private void DisplayMessage(string message)
