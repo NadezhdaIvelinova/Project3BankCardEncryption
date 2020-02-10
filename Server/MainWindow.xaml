@@ -5,11 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Server"
         mc:Ignorable="d"
-        Title="Bank Card Encryption - Server" Height="450" Width="500">
+        Title="Bank Card Encryption - Server" Height="490" Width="500" Closing="Window_Closing">
     <Grid>
-        <TextBox x:Name="txtDisplay" Height="300" 
-                 Margin="10" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" 
-                 Width="450" VerticalScrollBarVisibility="Auto" FontWeight="Bold" 
-                 AcceptsReturn="True" AcceptsTab="True"/>
+       
+        <StackPanel>
+            <StackPanel Orientation="Horizontal"  Width="450" Margin="0 25 0 0">
+                <Button x:Name="btnAddUser" Content="Add user" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand"/>
+                <Button x:Name="btnSortByEncryptionNumber" Content="Sort by encryption" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand"/>
+                <Button x:Name="btnSortByCardNumber" Content="Sort by card number" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand"/>
+            </StackPanel>
+            <Separator Margin="20 5 20 5"/>
+            <TextBlock Text="Information Logger" FontSize="16" FontWeight="Bold" Foreground="#217b9e" HorizontalAlignment="Center" Margin="5"/>
+            <TextBox x:Name="txtDisplay" Height="300" Margin="10" TextWrapping="Wrap" VerticalAlignment="Top" Width="430" VerticalScrollBarVisibility="Auto" FontWeight="Bold" AcceptsReturn="True" AcceptsTab="True"/>
+        </StackPanel>
+        
     </Grid>
 </Window>

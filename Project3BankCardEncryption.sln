@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{A1204950-8E7C-4A68-A091-7C45D1D66006}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardEncryption", "CardEncryption\CardEncryption.csproj", "{0BC6750D-C225-426C-91AD-9ACD6AF60DDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A1204950-8E7C-4A68-A091-7C45D1D66006}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1204950-8E7C-4A68-A091-7C45D1D66006}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1204950-8E7C-4A68-A091-7C45D1D66006}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BC6750D-C225-426C-91AD-9ACD6AF60DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BC6750D-C225-426C-91AD-9ACD6AF60DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BC6750D-C225-426C-91AD-9ACD6AF60DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BC6750D-C225-426C-91AD-9ACD6AF60DDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

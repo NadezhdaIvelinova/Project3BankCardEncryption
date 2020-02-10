@@ -130,5 +130,11 @@ namespace Server
                 txtDisplay.Text += message;
             }
         }
+
+        // close all threads associated with this application
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            System.Environment.Exit(System.Environment.ExitCode);
+        }
     }
 }

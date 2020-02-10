@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="Bank Card Encryption - Client" Height="400" Width="400">
+        Title="Bank Card Encryption - Client" Height="400" Width="400" Closing="Window_Closing">
     <Grid>
         <StackPanel Margin="10">
             <TextBlock Text="Account login" Margin="5 15 5 5" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#42c2f5"/>
