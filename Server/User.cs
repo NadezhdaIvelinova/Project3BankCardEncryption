@@ -22,20 +22,28 @@ namespace Server
 
         [System.Xml.Serialization.XmlElement("Permissions")]
         public Permissions Permission { get; set; }
-        
+
+        [System.Xml.Serialization.XmlElement("Card")]
+        public string Card { get; set; }
+
         #endregion
 
         #region Constructors
-        public User(string username, string password, string permissions)
+        public User(string username, string password, string permissions, string card)
         {
             Username = username;
             Password = password;
-            if (permissions.Equals("System.Windows.Controls.ComboBoxItem: Admin")) Permission = Permissions.ADMIN;
-            else if(permissions.Equals("System.Windows.Controls.ComboBoxItem: User")) Permission = Permissions.USER;
+            if (permissions.Contains("Admin")) Permission = Permissions.ADMIN;
+            else if(permissions.Contains("User")) Permission = Permissions.USER;
             else Permission = Permissions.GUEST;
+            Card = card;
 
         }
 
+        public User(string username, string password, string permissions) : this(username, password, permissions, null)
+        {
+
+        }
         
         public User()
         {
@@ -44,8 +52,8 @@ namespace Server
         #endregion
 
         public override string ToString()
-        {
-            return string.Format("User: " + Username + ", Password: " + Password + ", Permissions: " + Permission + "\n");
+        {           
+            return string.Format("User: " + Username + ", Password: " + Password + ", Permissions: " + Permission + " Card: " + Card + "\n");
         }
     }
 }

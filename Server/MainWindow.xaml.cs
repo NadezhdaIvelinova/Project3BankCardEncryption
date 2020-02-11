@@ -151,7 +151,7 @@ namespace Server
 
         private void btnAddUser_Click(object sender, RoutedEventArgs e)
         {
-            if (AddCardForm.Visibility == Visibility.Visible) AddCardForm.Visibility = Visibility.Hidden;
+            if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "CREATE NEW USER ACCOUNT"; 
             txtDisplay.Visibility = Visibility.Hidden;
@@ -166,23 +166,26 @@ namespace Server
             addUserForm.Visibility = Visibility.Hidden;
             btnCreateUser.Visibility = Visibility.Hidden;
 
-            User user = new User(txtUsername.Text, txtPassword.Password, cmbPermissions.SelectedItem.ToString());
+            //Add user to XML file
+            User user = new User(txtUsername.Text, txtPassword.Password, cmbPermissions.SelectedItem.ToString(), txtCardNumber.Text);
             XDocument xmlDoc = XDocument.Load("Users.xml");                   
             xmlDoc.Element("Users").Add(
                 new XElement("User",
                    new XElement("Username", user.Username),
                    new XElement("Password", user.Password),
-                   new XElement("Permissions", user.Permission)                 
+                   new XElement("Permissions", user.Permission), 
+                   new XElement("Card", user.Card)                    
                 ));
             xmlDoc.Save("Users.xml");
-            registeredUsers.User.Add(user);
+
+            registeredUsers.User.Add(user);            
         }
 
         private void btnAddCardToUser_Click(object sender, RoutedEventArgs e)
         {
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
-            AddCardForm.Visibility = Visibility.Hidden;
+            addCardToUser.Visibility = Visibility.Hidden;
             btnAddCardToUser.Visibility = Visibility.Hidden;
         }
 
@@ -192,7 +195,7 @@ namespace Server
             if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "ADD CARD TO USER";
             txtDisplay.Visibility = Visibility.Hidden;
-            AddCardForm.Visibility = Visibility.Visible;
+            addCardToUser.Visibility = Visibility.Visible;
             btnAddCardToUser.Visibility = Visibility.Visible;
 
         }
@@ -201,7 +204,7 @@ namespace Server
         {
             if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
             if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
-            if (AddCardForm.Visibility == Visibility.Visible) AddCardForm.Visibility = Visibility.Hidden;
+            if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
@@ -211,7 +214,7 @@ namespace Server
         {
             if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
             if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
-            if (AddCardForm.Visibility == Visibility.Visible) AddCardForm.Visibility = Visibility.Hidden;
+            if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;        
