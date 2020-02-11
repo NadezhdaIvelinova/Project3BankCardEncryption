@@ -136,5 +136,42 @@ namespace Server
         {
             System.Environment.Exit(System.Environment.ExitCode);
         }
+
+        private void btnAddUser_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddCardForm.Visibility == Visibility.Visible) AddCardForm.Visibility = Visibility.Hidden;
+            if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
+            txtInfo.Text = "CREATE NEW USER ACCOUNT"; 
+            txtDisplay.Visibility = Visibility.Hidden;
+            AddUserForm.Visibility = Visibility.Visible;
+            btnCreateUser.Visibility = Visibility.Visible;
+        }
+
+        private void btnCreateUser_Click(object sender, RoutedEventArgs e)
+        {
+            txtInfo.Text = "INFORMATION LOGGER";
+            txtDisplay.Visibility = Visibility.Visible;
+            AddUserForm.Visibility = Visibility.Hidden;
+            btnCreateUser.Visibility = Visibility.Hidden;
+        }
+
+        private void btnAddCardToUser_Click(object sender, RoutedEventArgs e)
+        {
+            txtInfo.Text = "INFORMATION LOGGER";
+            txtDisplay.Visibility = Visibility.Visible;
+            AddCardForm.Visibility = Visibility.Hidden;
+            btnAddCardToUser.Visibility = Visibility.Hidden;
+        }
+
+        private void btnAddCard_Click(object sender, RoutedEventArgs e)
+        {
+            if(AddUserForm.Visibility == Visibility.Visible) AddUserForm.Visibility = Visibility.Hidden;
+            if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
+            txtInfo.Text = "ADD CARD TO USER";
+            txtDisplay.Visibility = Visibility.Hidden;
+            AddCardForm.Visibility = Visibility.Visible;
+            btnAddCardToUser.Visibility = Visibility.Visible;
+
+        }
     }
 }

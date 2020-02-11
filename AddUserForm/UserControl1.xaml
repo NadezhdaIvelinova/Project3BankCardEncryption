@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="AddUserForm.UserControl1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AddUserForm"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="430" Background="White" BorderBrush="#217b9e" BorderThickness="2">
+    <Grid>
+        <StackPanel Margin="5">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Username" Margin="5 0 5 0" FontSize="16" FontWeight="DemiBold"/>
+                <TextBlock Text="*" FontSize="16" FontWeight="DemiBold" Foreground="Red" Margin="0 0 5 0"/>
+            </StackPanel>           
+            <TextBox x:Name="txtUsername" Margin="5 0 5 0" Padding="5" FontSize="14"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Password" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+                <TextBlock Text="*" FontSize="16" FontWeight="DemiBold" Foreground="Red" Margin="0 0 5 0"/>
+            </StackPanel>            
+            <PasswordBox x:Name="txtPassword" Margin="5 0 5 0" Padding="5" FontSize="14"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Permissions" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+                <TextBlock Text="*" FontSize="16" FontWeight="DemiBold" Foreground="Red" Margin="0 0 5 0"/>
+            </StackPanel>            
+            <ComboBox Margin="5 0 5 0" Padding="5" SelectedIndex="0" FontSize="14">
+                <ComboBoxItem Content="Admin"/>
+                <ComboBoxItem Content="User"/>
+                <ComboBoxItem Content="Guest"/>
+            </ComboBox>
+            <TextBlock Text="Bank card number" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+            <TextBox x:Name="txtCardNumber" Margin="5 0 5 0" Padding="5" FontSize="14"/>            
+        </StackPanel>    
+    </Grid>
+</UserControl>
