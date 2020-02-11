@@ -16,6 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using wox.serial;
 
 namespace Server
 {
@@ -28,6 +31,8 @@ namespace Server
         private int counter;
         private Dictionary<Thread, Socket> connections;
         private Dictionary<Thread, BinaryWriter> writers;
+        private Users registeredUsers;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,6 +41,13 @@ namespace Server
             incomingThread = new Thread(new ThreadStart(RunServer));
             incomingThread.Start();
             connections = new Dictionary<Thread, Socket>();
+
+            //Deserialize all user registered in the system
+            XmlSerializer serializer = new XmlSerializer(typeof(Users));           
+            using (Stream reader = new FileStream("Users.xml", FileMode.Open))
+            {
+                registeredUsers = (Users)serializer.Deserialize(reader);
+            }
         }
 
         public void RunServer()
@@ -143,7 +155,7 @@ namespace Server
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "CREATE NEW USER ACCOUNT"; 
             txtDisplay.Visibility = Visibility.Hidden;
-            AddUserForm.Visibility = Visibility.Visible;
+            addUserForm.Visibility = Visibility.Visible;
             btnCreateUser.Visibility = Visibility.Visible;
         }
 
@@ -151,8 +163,19 @@ namespace Server
         {
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
-            AddUserForm.Visibility = Visibility.Hidden;
+            addUserForm.Visibility = Visibility.Hidden;
             btnCreateUser.Visibility = Visibility.Hidden;
+
+            User user = new User(txtUsername.Text, txtPassword.Password, cmbPermissions.SelectedItem.ToString());
+            XDocument xmlDoc = XDocument.Load("Users.xml");                   
+            xmlDoc.Element("Users").Add(
+                new XElement("User",
+                   new XElement("Username", user.Username),
+                   new XElement("Password", user.Password),
+                   new XElement("Permissions", user.Permission)                 
+                ));
+            xmlDoc.Save("Users.xml");
+            registeredUsers.User.Add(user);
         }
 
         private void btnAddCardToUser_Click(object sender, RoutedEventArgs e)
@@ -165,13 +188,33 @@ namespace Server
 
         private void btnAddCard_Click(object sender, RoutedEventArgs e)
         {
-            if(AddUserForm.Visibility == Visibility.Visible) AddUserForm.Visibility = Visibility.Hidden;
+            if(addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
             if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "ADD CARD TO USER";
             txtDisplay.Visibility = Visibility.Hidden;
             AddCardForm.Visibility = Visibility.Visible;
             btnAddCardToUser.Visibility = Visibility.Visible;
 
+        }
+
+        private void btnSortByEncryptionNumber_Click(object sender, RoutedEventArgs e)
+        {
+            if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
+            if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
+            if (AddCardForm.Visibility == Visibility.Visible) AddCardForm.Visibility = Visibility.Hidden;
+            if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
+            txtInfo.Text = "INFORMATION LOGGER";
+            txtDisplay.Visibility = Visibility.Visible;
+        }
+
+        private void btnSortByCardNumber_Click(object sender, RoutedEventArgs e)
+        {
+            if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
+            if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
+            if (AddCardForm.Visibility == Visibility.Visible) AddCardForm.Visibility = Visibility.Hidden;
+            if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
+            txtInfo.Text = "INFORMATION LOGGER";
+            txtDisplay.Visibility = Visibility.Visible;        
         }
     }
 }

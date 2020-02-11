@@ -8,22 +8,43 @@
         xmlns:AddCardToUserForm11="clr-namespace:AddCardToUserForm;assembly=AddCardToUserForm"
         mc:Ignorable="d"
         Title="Bank Card Encryption - Server" Height="500" Width="560" Closing="Window_Closing">
-    <Grid>
-       
+    <Grid>       
         <StackPanel>
             <StackPanel Orientation="Horizontal"  Width="540" Margin="0 25 0 0">
                 <Button x:Name="btnAddUser" Content="Add user" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnAddUser_Click"/>
                 <Button x:Name="btnAddCard" Content="Add card" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnAddCard_Click"/>
-                <Button x:Name="btnSortByEncryptionNumber" Content="Sort by encryption" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand"/>
-                <Button x:Name="btnSortByCardNumber" Content="Sort by card number" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand"/>
+                <Button x:Name="btnSortByEncryptionNumber" Content="Sort by encryption" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnSortByEncryptionNumber_Click"/>
+                <Button x:Name="btnSortByCardNumber" Content="Sort by card number" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnSortByCardNumber_Click"/>
             </StackPanel>
             <Separator Margin="20 5 20 5"/>
             <TextBlock x:Name="txtInfo" Text="INFORMATION LOGGER" FontSize="16" FontWeight="Bold" Foreground="#217b9e" HorizontalAlignment="Center" Margin="5"/>
             <TextBox x:Name="txtDisplay" Height="300" Margin="10" TextWrapping="Wrap" VerticalAlignment="Top" Width="430" VerticalScrollBarVisibility="Auto" FontWeight="Bold" AcceptsReturn="True" AcceptsTab="True"/>
         </StackPanel>
-        <StackPanel>
-            <AddUserForm1:UserControl1 x:Name="AddUserForm" Height="250" Width="420" Margin="30,128,30,20" Visibility="Hidden"/>
-            <Button x:Name="btnCreateUser" Content="Create user account" Background="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Height="40" BorderBrush="#217b9e" Padding="5" Width="200" Margin="10 0 10 10" Click="btnCreateUser_Click" Cursor="Hand" Visibility="Hidden"/>
+        <StackPanel Height="300" Width="420" Margin="30,100,30,20" x:Name="addUserForm" Visibility="Hidden">
+            <StackPanel Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Username" Margin="5 0 5 0" FontSize="16" FontWeight="DemiBold"/>
+                    <TextBlock Text="*" FontSize="16" FontWeight="DemiBold" Foreground="Red" Margin="0 0 5 0"/>
+                </StackPanel>
+                <TextBox x:Name="txtUsername" Margin="5 0 5 0" Padding="5" FontSize="14"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Password" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+                    <TextBlock Text="*" FontSize="16" FontWeight="DemiBold" Foreground="Red" Margin="0 0 5 0"/>
+                </StackPanel>
+                <PasswordBox x:Name="txtPassword" Margin="5 0 5 0" Padding="5" FontSize="14"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Permissions" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+                    <TextBlock Text="*" FontSize="16" FontWeight="DemiBold" Foreground="Red" Margin="0 0 5 0"/>
+                </StackPanel>
+                <ComboBox Margin="5 0 5 0" Padding="5" SelectedIndex="0" FontSize="14" x:Name="cmbPermissions">
+                    <ComboBoxItem Content="Admin"/>
+                    <ComboBoxItem Content="User"/>
+                    <ComboBoxItem Content="Guest"/>
+                </ComboBox>
+                <TextBlock Text="Bank card number" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+                <TextBox x:Name="txtCardNumber" Margin="5 0 5 0" Padding="5" FontSize="14"/>
+            </StackPanel>
+            <Button x:Name="btnCreateUser" Content="Create user account" Background="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Height="40" BorderBrush="#217b9e" Padding="5" Width="200" Margin="10 10 10 10" Click="btnCreateUser_Click" Cursor="Hand"/>
         </StackPanel>
         <StackPanel>
             <AddCardToUserForm11:UserControl1 x:Name="AddCardForm" Width="410" Margin="67,140,66.6,0" Visibility="Hidden"/>
