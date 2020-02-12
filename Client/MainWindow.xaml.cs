@@ -64,6 +64,12 @@ namespace Client
                     {
                         // read message from server        
                         message = reader.ReadString();
+                        if(message.Equals("SERVER >>> Successful Authentication"))
+                        {
+                            HideLoginPanels();
+                            ShowOperationsPanel();
+                            
+                        }
                         DisplayMessage("\r\n" + message);
                     } 
                     catch (Exception)
@@ -103,10 +109,66 @@ namespace Client
             }
         }
 
+        private void HideLoginPanels()
+        {
+            //Check if modifying txtDisplay is not thread safe
+            if (!LoginPanel.Dispatcher.CheckAccess())
+            {
+                // use inherited method Invoke to execute DisplayMessage via a delegate                                       
+                LoginPanel.Dispatcher.Invoke(new Action(() => LoginPanel.Visibility = Visibility.Collapsed));
+            }
+            else
+            {
+                LoginPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+        private void ShowOperationsPanel()
+        {
+            //Check if modifying txtDisplay is not thread safe
+            if (!OperationsPanel.Dispatcher.CheckAccess())
+            {
+                // use inherited method Invoke to execute DisplayMessage via a delegate                                       
+                OperationsPanel.Dispatcher.Invoke(new Action(() => OperationsPanel.Visibility = Visibility.Visible));
+            }
+            else
+            {
+                OperationsPanel.Visibility = Visibility.Visible;
+            }
+        }
+
         // close all threads associated with this application
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             System.Environment.Exit(System.Environment.ExitCode);
+        }
+
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                writer.Write("Credentials" + " " + txtUsername.Text + " " + txtPassword.Password);
+                txtPassword.Clear();
+                txtUsername.Clear();
+            }
+            catch (SocketException)
+            {
+                MessageBox.Show("Error writing object");
+            }
+        }
+
+        private void btnCalculate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnCalculate_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnNewOperation_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

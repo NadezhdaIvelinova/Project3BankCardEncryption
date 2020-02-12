@@ -5,26 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="Bank Card Encryption - Client" Height="400" Width="400" Closing="Window_Closing">
+        Title="Bank Card Encryption - Client" Height="500" Width="400" Closing="Window_Closing">
     <Grid>
-        <StackPanel Margin="10">
-            <TextBlock Text="Account login" Margin="5 15 5 5" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#217b9e"/>
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBlock Text="Enter username " FontSize="14" FontWeight="Bold"/>
-                <TextBlock Text="*" FontSize="14" FontWeight="Bold" Foreground="Red"/>
+        <StackPanel Margin="10" >
+            <StackPanel x:Name="LoginPanel">
+                <TextBlock Text="Account login" Margin="5 15 5 5" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#217b9e"/>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Text="Enter username " FontSize="14" FontWeight="Bold"/>
+                    <TextBlock Text="*" FontSize="14" FontWeight="Bold" Foreground="Red"/>
+                </StackPanel>
+                <TextBox x:Name="txtUsername" Margin="5" Padding="5"  FontSize="14"/>
+                <Separator Margin="5 15 5 5"/>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Text="Enter password " FontSize="14" FontWeight="Bold"/>
+                    <TextBlock Text="*" FontSize="14" FontWeight="Bold" Foreground="Red"/>
+                </StackPanel>
+                <PasswordBox x:Name="txtPassword" Margin="5" Padding="5"  FontSize="14"/>
+                <Separator Margin="5 15 5 5"/>
+                <Button x:Name="btnLogin" Content="Login" Margin="5 15 5 5" Padding="5" Background="#217b9e" Foreground="White" FontSize="20" BorderThickness="0" Cursor="Hand" Click="btnLogin_Click"/>
             </StackPanel>
-            <TextBox Margin="5" Padding="5"  FontSize="14"/>
-            <Separator Margin="5 15 5 5"/>
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBlock Text="Enter password " FontSize="14" FontWeight="Bold"/>
-                <TextBlock Text="*" FontSize="14" FontWeight="Bold" Foreground="Red"/>
+            <StackPanel x:Name="OperationsPanel" Visibility="Collapsed">
+                <TextBlock Text="Account operations" Margin="5 15 5 10" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#217b9e"/>
+                <TextBlock Text="Choose operation: " FontSize="14" FontWeight="Bold"  Margin="5 5 5 5"/>
+                <ComboBox Margin="5 5 5 5" Padding="5" SelectedIndex="0" FontSize="14" x:Name="cmbOperation">
+                    <ComboBoxItem Content="Encrypt"/>
+                    <ComboBoxItem Content="Decrypt"/>
+                </ComboBox>
+                <Separator Margin="5" Background="#217b9e"/>
+                <TextBlock Text="Enter card number: " FontSize="14" FontWeight="Bold"  Margin="5 5 5 5"/>
+                <TextBox x:Name="txtCardNumber" Margin="5" Padding="5"  FontSize="14"/>
+                <Separator Margin="5" Background="#217b9e"/>
+                <Button x:Name="btnCalculate" Content="Calculate" Margin="5 5 5 5" Padding="5" Background="#217b9e" Foreground="White" FontSize="20" BorderThickness="0" Cursor="Hand" Click="btnCalculate_Click"/>
+                <Separator Margin="5" Background="#217b9e"/>
+                <TextBlock Text="Output: " FontSize="14" FontWeight="Bold"  Margin="5 5 5 5"/>
+                <TextBox x:Name="txtOutput" Margin="5" Padding="5"  FontSize="14"/>
+                <Separator Margin="5" Background="#217b9e"/>
+                <Button x:Name="btnNewOperation" Content="New Operation" Margin="5 5 5 5" Padding="5" Background="#217b9e" Foreground="White" FontSize="20" BorderThickness="0" Cursor="Hand" Click="btnNewOperation_Click"/>
             </StackPanel>
-            <PasswordBox Margin="5" Padding="5"  FontSize="14"/>
-            <Separator Margin="5 15 5 5"/>
-            <Button x:Name="btnLogin" Content="Login" Margin="5 15 5 5" Padding="5" Background="#217b9e" Foreground="White" FontSize="20" BorderThickness="0" Cursor="Hand"/>
-            <TextBox Margin="5 15 5 5" Padding="5" x:Name="txtDisplay" Visibility="Hidden"/>
-        </StackPanel>
-
-
+            <TextBox Margin="5,15,4.6,5" Padding="5" x:Name="txtDisplay" Height="50" />
+            
+        </StackPanel>       
     </Grid>
 </Window>

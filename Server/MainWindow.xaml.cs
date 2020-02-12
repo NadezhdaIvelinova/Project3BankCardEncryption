@@ -107,8 +107,24 @@ namespace Server
                 try
                 {
                     clientReply = reader.ReadString();
+                    if(clientReply.Contains("Credentials"))
+                    {
+                        string username = GetCredentials(clientReply).Item1;
+                        string password = GetCredentials(clientReply).Item2;
 
-                    DisplayMessage("\r\n" + clientReply);
+                        DisplayMessage("\r\n Username: " + username);
+                        DisplayMessage("\r\n Password: " + password);
+
+                        //Authenticate
+                        if(registeredUsers.User.Any(x => x.Username == username && x.Password == password))
+                        {
+                            writer.Write("SERVER >>> Successful Authentication");
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }                   
                 }
                 catch (Exception)
                 {
@@ -237,6 +253,20 @@ namespace Server
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
+
+            CardManipulation card = new CardManipulation(5);
+            string cardencr = card.Encrypt("4563960122001999");
+            txtDisplay.AppendText("Encrypted: " + cardencr + "\n");
+            txtDisplay.AppendText(card.Decrypt(cardencr));
+
+        }
+
+        private (string, string) GetCredentials(string reply)
+        {
+            string[] tokens = reply.Split(' ');
+            string username = tokens[1];
+            string password = tokens[2];
+            return (username, password);
         }
     }
 }
