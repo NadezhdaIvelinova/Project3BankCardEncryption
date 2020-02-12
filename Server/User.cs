@@ -9,9 +9,8 @@ namespace Server
     [Serializable()]
     public class User
     {
-        #region Data members      
+           
         public enum Permissions { ADMIN, USER, GUEST };      
-        #endregion
 
         #region Properties
         [System.Xml.Serialization.XmlElement("Username")]

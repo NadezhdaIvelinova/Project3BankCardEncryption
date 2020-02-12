@@ -161,24 +161,46 @@ namespace Server
 
         private void btnCreateUser_Click(object sender, RoutedEventArgs e)
         {
-            txtInfo.Text = "INFORMATION LOGGER";
-            txtDisplay.Visibility = Visibility.Visible;
-            addUserForm.Visibility = Visibility.Hidden;
-            btnCreateUser.Visibility = Visibility.Hidden;
+            if(Validation.ValidateCredentials(txtUsername.Text, txtPassword.Password))
+            {
+                
+                if(cmbPermissions.SelectedItem.ToString().Contains("Guest") && !String.IsNullOrEmpty(txtCardNumber.Text))
+                {
+                    MessageBox.Show("You cannot add bank card number to type of user who is guest", "Invalid credentials");
+                }
+                else if(registeredUsers.User.Any(x => x.Username == txtUsername.Text))
+                {
+                    MessageBox.Show("This usernamne is taken. Please try another one. ", "Invalid credentials");
+                }
+                else
+                {
+                    //Add user to XML file
+                    User user = new User(txtUsername.Text, txtPassword.Password, cmbPermissions.SelectedItem.ToString(), txtCardNumber.Text);
+                    XDocument xmlDoc = XDocument.Load("Users.xml");
+                    xmlDoc.Element("Users").Add(
+                        new XElement("User",
+                           new XElement("Username", user.Username),
+                           new XElement("Password", user.Password),
+                           new XElement("Permissions", user.Permission),
+                           new XElement("Card", user.Card)
+                        ));
+                    xmlDoc.Save("Users.xml");
 
-            //Add user to XML file
-            User user = new User(txtUsername.Text, txtPassword.Password, cmbPermissions.SelectedItem.ToString(), txtCardNumber.Text);
-            XDocument xmlDoc = XDocument.Load("Users.xml");                   
-            xmlDoc.Element("Users").Add(
-                new XElement("User",
-                   new XElement("Username", user.Username),
-                   new XElement("Password", user.Password),
-                   new XElement("Permissions", user.Permission), 
-                   new XElement("Card", user.Card)                    
-                ));
-            xmlDoc.Save("Users.xml");
+                    registeredUsers.User.Add(user);
 
-            registeredUsers.User.Add(user);            
+                    txtInfo.Text = "INFORMATION LOGGER";
+                    txtDisplay.Visibility = Visibility.Visible;
+                    addUserForm.Visibility = Visibility.Hidden;
+                    btnCreateUser.Visibility = Visibility.Hidden;
+                }
+              
+            }
+            else
+            {
+                MessageBox.Show("Username and Password must contain only letters, digits and underscore.", "Invalid credentials");
+            }
+
+                    
         }
 
         private void btnAddCardToUser_Click(object sender, RoutedEventArgs e)

@@ -54,8 +54,7 @@ namespace Client
                 //Create objects for writing and reading across stream
                 writer = new BinaryWriter(output);
                 reader = new BinaryReader(output);
-
-                DisplayMessage("\r\nGot I/O streams\r\n");
+                
 
                 // loop until server signals termination
                 do
