@@ -10,7 +10,6 @@ namespace Server
     public class CardManipulation
     {
         private static int key;
-        private int realLength;
 
         public CardManipulation(int keyForEncryption)
         {
@@ -30,8 +29,7 @@ namespace Server
         }
 
         public string Encrypt(string plainText)
-        {
-            realLength = plainText.Length;
+        { 
             char[] plainTextChars = plainText.ToCharArray();
             int numOfColumns = Math.Abs(Key);
             int numOfRows = plainTextChars.Length / Math.Abs(Key);
@@ -124,7 +122,7 @@ namespace Server
 
         }
 
-        public string Decrypt(string cipherText)
+        public string Decrypt(string cipherText, int realLength)
         {
             char[] cipherTextChars = cipherText.ToCharArray();
             int numberOfColumns = Math.Abs(Key);

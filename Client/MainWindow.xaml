@@ -42,8 +42,7 @@
                 <Separator Margin="5" Background="#217b9e"/>
                 <Button x:Name="btnNewOperation" Content="New Operation" Margin="5 5 5 5" Padding="5" Background="#217b9e" Foreground="White" FontSize="20" BorderThickness="0" Cursor="Hand" Click="btnNewOperation_Click"/>
             </StackPanel>
-            <TextBox Margin="5,15,4.6,5" Padding="5" x:Name="txtDisplay" Height="50" />
-            
+            <TextBox Margin="5,15,4.6,5" Padding="5" x:Name="txtDisplay" Height="149" />            
         </StackPanel>       
     </Grid>
 </Window>

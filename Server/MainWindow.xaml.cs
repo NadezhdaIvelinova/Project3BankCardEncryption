@@ -31,7 +31,10 @@ namespace Server
         private int counter;
         private Dictionary<Thread, Socket> connections;
         private Dictionary<Thread, BinaryWriter> writers;
+        private Dictionary<Thread, int> numberOfEcryptionsPerUser;
+        private Dictionary<string, List<string>> cardAndEncryptions;
         private Users registeredUsers;
+        private static int KEY = 5;
 
         public MainWindow()
         {
@@ -41,12 +44,19 @@ namespace Server
             incomingThread = new Thread(new ThreadStart(RunServer));
             incomingThread.Start();
             connections = new Dictionary<Thread, Socket>();
+            numberOfEcryptionsPerUser = new Dictionary<Thread, int>();
+            cardAndEncryptions = new Dictionary<string, List<string>>();
 
             //Deserialize all user registered in the system
             XmlSerializer serializer = new XmlSerializer(typeof(Users));
             using (Stream reader = new FileStream("Users.xml", FileMode.Open))
             {
                 registeredUsers = (Users)serializer.Deserialize(reader);
+            }
+
+            foreach (var user in registeredUsers.User)
+            {
+                cardAndEncryptions.Add(user.Card, new List<string>());
             }
         }
 
@@ -89,6 +99,7 @@ namespace Server
             BinaryReader reader = new BinaryReader(socketStream);
             writers.Add(Thread.CurrentThread, writer);
             connections.Add(Thread.CurrentThread, connection);
+            numberOfEcryptionsPerUser.Add(Thread.CurrentThread, 0);
 
             lock (this)
             {
@@ -100,6 +111,7 @@ namespace Server
             writer.Write("SERVER>>> Connection successful");
 
             string clientReply = "";
+            string username = null;
 
             //Read string data sent from client
             do
@@ -107,16 +119,15 @@ namespace Server
                 try
                 {
                     clientReply = reader.ReadString();
-                    if(clientReply.Contains("Credentials"))
+                    if (clientReply.Contains("Credentials"))
                     {
-                        string username = GetCredentials(clientReply).Item1;
-                        string password = GetCredentials(clientReply).Item2;
+                        username = GetCredentials(clientReply).Item1;
+                        string password = GetCredentials(clientReply).Item2;                        
 
-                        DisplayMessage("\r\n Username: " + username);
-                        DisplayMessage("\r\n Password: " + password);
+                        DisplayMessage("\r\nUser " + username + " has entered in his account");
 
                         //Authenticate
-                        if(registeredUsers.User.Any(x => x.Username == username && x.Password == password))
+                        if (registeredUsers.User.Any(x => x.Username == username && x.Password == password))
                         {
                             writer.Write("SERVER >>> Successful Authentication");
                         }
@@ -124,7 +135,50 @@ namespace Server
                         {
                             break;
                         }
-                    }                   
+                    }
+                    else if (clientReply.Contains("Encrypt"))
+                    {
+                        string[] tokens = clientReply.Split(' ');
+                        string cardToEncrypt = tokens[1];
+
+                        if (registeredUsers.User.Any(x => x.Username == username && x.Permission == User.Permissions.GUEST))
+                        {
+                            writer.Write("SERVER >>> Cannot make encryption from guest account.");
+                        }
+                        else if (!registeredUsers.User.Any(x => x.Username == username && x.Card == cardToEncrypt))
+                        {
+                            writer.Write("SERVER >>> Invalid card number");
+                        }
+                        else
+                        {
+                            if (numberOfEcryptionsPerUser[Thread.CurrentThread] == 11)
+                            {
+                                writer.Write("SERVER >>> Cannot make more than 12 encryptions");
+                            }
+                            else
+                            {
+                                string encryption = Encrypt(cardToEncrypt, numberOfEcryptionsPerUser[Thread.CurrentThread]);
+                                cardAndEncryptions[cardToEncrypt].Add(encryption);
+                                writer.Write(encryption);
+                                numberOfEcryptionsPerUser[Thread.CurrentThread]++;
+                            }
+                        }
+                    }
+                    else if (clientReply.Contains("Decrypt"))
+                    {
+                        string[] tokens = clientReply.Split(' ');
+                        string cardToDecrypt = tokens[1];                       
+                        User user = registeredUsers.User.Where(x => x.Username == username).First();                       
+                       
+                        if (cardAndEncryptions[user.Card].Contains(cardToDecrypt))
+                        {
+                            writer.Write(user.Card);
+                        }
+                        else
+                        {
+                            writer.Write("SERVER >>> Cannot decrypt this card.");
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -134,7 +188,7 @@ namespace Server
             lock (this)
             {
                 counter--;
-                DisplayMessage("\r\nUser terminated connection\r\n");
+                DisplayMessage("\r\nUser " + username + " terminated connection\r\n");
                 writers.Remove(Thread.CurrentThread);
                 connections.Remove(Thread.CurrentThread);
             }
@@ -208,6 +262,7 @@ namespace Server
                 xmlDoc.Save("Users.xml");
 
                 registeredUsers.User.Add(user);
+                cardAndEncryptions.Add(user.Card, new List<string>());
 
                 txtInfo.Text = "INFORMATION LOGGER";
                 txtDisplay.Visibility = Visibility.Visible;
@@ -243,6 +298,8 @@ namespace Server
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
+
+            WriteSortedByEncryption();
         }
 
         private void btnSortByCardNumber_Click(object sender, RoutedEventArgs e)
@@ -253,12 +310,6 @@ namespace Server
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
-
-            CardManipulation card = new CardManipulation(5);
-            string cardencr = card.Encrypt("4563960122001999");
-            txtDisplay.AppendText("Encrypted: " + cardencr + "\n");
-            txtDisplay.AppendText(card.Decrypt(cardencr));
-
         }
 
         private (string, string) GetCredentials(string reply)
@@ -267,6 +318,30 @@ namespace Server
             string username = tokens[1];
             string password = tokens[2];
             return (username, password);
+        }
+
+        private string Encrypt(string card, int numberOfEcryptions)
+        {
+            CardManipulation encryption;
+            if (numberOfEcryptions == 0)
+            {
+                encryption = new CardManipulation(KEY);
+                return encryption.Encrypt(card);
+
+            }
+            else
+            {
+                encryption = new CardManipulation(KEY + numberOfEcryptions);
+                return encryption.Encrypt(card);
+            }
+        }
+
+        private void WriteSortedByEncryption()
+        {
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter("./SortedByCardEncryption.txt"))
+            {
+               
+            }
         }
     }
 }
