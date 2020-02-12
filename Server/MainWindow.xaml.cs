@@ -300,6 +300,7 @@ namespace Server
             txtDisplay.Visibility = Visibility.Visible;
 
             WriteSortedByEncryption();
+            DisplayMessage("Successfully sorted by encryption\n");
         }
 
         private void btnSortByCardNumber_Click(object sender, RoutedEventArgs e)
@@ -310,6 +311,9 @@ namespace Server
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
+
+            WriteSortedByCardNumber();
+            DisplayMessage("Successfully sorted by card number\n");
         }
 
         private (string, string) GetCredentials(string reply)
@@ -338,9 +342,46 @@ namespace Server
 
         private void WriteSortedByEncryption()
         {
+
+            var tupleList = new List<(string, string)>();
+            foreach (var item in cardAndEncryptions)
+            {
+                string card = item.Key;
+                foreach (var encryption in cardAndEncryptions[card])
+                {
+                    tupleList.Add((card, encryption));
+                }
+            }
+            var sortedTuples = tupleList.OrderBy((x => x.Item2));
             using (System.IO.StreamWriter file = new System.IO.StreamWriter("./SortedByCardEncryption.txt"))
             {
-               
+                file.WriteLine("Sorted By Encryption records:\n");
+                foreach (var record in sortedTuples)
+                {
+                    file.WriteLine(record);
+                }
+            }
+        }
+
+        private void WriteSortedByCardNumber()
+        {
+            var tupleList = new List<(string, string)>();
+            foreach (var item in cardAndEncryptions)
+            {
+                string card = item.Key;
+                foreach (var encryption in cardAndEncryptions[card])
+                {
+                    tupleList.Add((card, encryption));
+                }
+            }
+            var sortedTuples = tupleList.OrderBy((x => x.Item1));
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter("./SortedByCardNumber.txt"))
+            {
+                file.WriteLine("Sorted By Card Number records:\n");
+                foreach (var record in sortedTuples)
+                {
+                    file.WriteLine(record);
+                }
             }
         }
     }
