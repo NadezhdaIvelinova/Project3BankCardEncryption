@@ -43,7 +43,7 @@ namespace Server
             connections = new Dictionary<Thread, Socket>();
 
             //Deserialize all user registered in the system
-            XmlSerializer serializer = new XmlSerializer(typeof(Users));           
+            XmlSerializer serializer = new XmlSerializer(typeof(Users));
             using (Stream reader = new FileStream("Users.xml", FileMode.Open))
             {
                 registeredUsers = (Users)serializer.Deserialize(reader);
@@ -64,16 +64,16 @@ namespace Server
                 listener.Start();
 
                 //Establish connection upon client request
-                while(true)
+                while (true)
                 {
                     DisplayMessage("Waiting for connection...\r\n");
                     //Accept incoming connection
                     Socket connection = listener.AcceptSocket();
 
                     ThreadPool.QueueUserWorkItem(new WaitCallback(RunInThread), connection);
-                }                
+                }
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 MessageBox.Show(exception.ToString());
             }
@@ -90,7 +90,7 @@ namespace Server
             writers.Add(Thread.CurrentThread, writer);
             connections.Add(Thread.CurrentThread, connection);
 
-            lock(this)
+            lock (this)
             {
                 counter++;
                 DisplayMessage("Connection " + counter + " received.\r\n");
@@ -115,7 +115,7 @@ namespace Server
                     break;
                 }
             } while (clientReply != "CLIENT>>> TERMINATE" && connection.Connected);
-            lock(this)
+            lock (this)
             {
                 counter--;
                 DisplayMessage("\r\nUser terminated connection\r\n");
@@ -132,7 +132,7 @@ namespace Server
         private void DisplayMessage(string message)
         {
             //Check if modifying txtDisplay is not thread safe
-            if(!txtDisplay.Dispatcher.CheckAccess())
+            if (!txtDisplay.Dispatcher.CheckAccess())
             {
                 // use inherited method Invoke to execute DisplayMessage via a delegate                                       
                 txtDisplay.Dispatcher.Invoke(new Action(() => txtDisplay.Text += message));
@@ -153,7 +153,7 @@ namespace Server
         {
             if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
-            txtInfo.Text = "CREATE NEW USER ACCOUNT"; 
+            txtInfo.Text = "CREATE NEW USER ACCOUNT";
             txtDisplay.Visibility = Visibility.Hidden;
             addUserForm.Visibility = Visibility.Visible;
             btnCreateUser.Visibility = Visibility.Visible;
@@ -161,46 +161,43 @@ namespace Server
 
         private void btnCreateUser_Click(object sender, RoutedEventArgs e)
         {
-            if(Validation.ValidateCredentials(txtUsername.Text, txtPassword.Password))
-            {
-                
-                if(cmbPermissions.SelectedItem.ToString().Contains("Guest") && !String.IsNullOrEmpty(txtCardNumber.Text))
-                {
-                    MessageBox.Show("You cannot add bank card number to type of user who is guest", "Invalid credentials");
-                }
-                else if(registeredUsers.User.Any(x => x.Username == txtUsername.Text))
-                {
-                    MessageBox.Show("This usernamne is taken. Please try another one. ", "Invalid credentials");
-                }
-                else
-                {
-                    //Add user to XML file
-                    User user = new User(txtUsername.Text, txtPassword.Password, cmbPermissions.SelectedItem.ToString(), txtCardNumber.Text);
-                    XDocument xmlDoc = XDocument.Load("Users.xml");
-                    xmlDoc.Element("Users").Add(
-                        new XElement("User",
-                           new XElement("Username", user.Username),
-                           new XElement("Password", user.Password),
-                           new XElement("Permissions", user.Permission),
-                           new XElement("Card", user.Card)
-                        ));
-                    xmlDoc.Save("Users.xml");
-
-                    registeredUsers.User.Add(user);
-
-                    txtInfo.Text = "INFORMATION LOGGER";
-                    txtDisplay.Visibility = Visibility.Visible;
-                    addUserForm.Visibility = Visibility.Hidden;
-                    btnCreateUser.Visibility = Visibility.Hidden;
-                }
-              
-            }
-            else
+            if (!Validation.ValidateCredentials(txtUsername.Text, txtPassword.Password))
             {
                 MessageBox.Show("Username and Password must contain only letters, digits and underscore.", "Invalid credentials");
             }
+            else if (registeredUsers.User.Any(x => x.Username == txtUsername.Text))
+            {
+                MessageBox.Show("This usernamne is taken. Please try another one. ", "Invalid credentials");
+            }
+            else if (cmbPermissions.SelectedItem.ToString().Contains("Guest") && !String.IsNullOrEmpty(txtCardNumber.Text))
+            {
+                MessageBox.Show("You cannot add bank card number to type of user who is guest.", "Invalid credentials");
+            }
+            else if (!Validation.ValidateCardNumber(txtCardNumber.Text))
+            {
+                MessageBox.Show("The number of card you have entered is incorrect. Please check it again", "Invalid card number");
+            }
+            else
+            {
+                //Add user to XML file
+                User user = new User(txtUsername.Text, txtPassword.Password, cmbPermissions.SelectedItem.ToString(), txtCardNumber.Text);
+                XDocument xmlDoc = XDocument.Load("Users.xml");
+                xmlDoc.Element("Users").Add(
+                    new XElement("User",
+                       new XElement("Username", user.Username),
+                       new XElement("Password", user.Password),
+                       new XElement("Permissions", user.Permission),
+                       new XElement("Card", user.Card)
+                    ));
+                xmlDoc.Save("Users.xml");
 
-                    
+                registeredUsers.User.Add(user);
+
+                txtInfo.Text = "INFORMATION LOGGER";
+                txtDisplay.Visibility = Visibility.Visible;
+                addUserForm.Visibility = Visibility.Hidden;
+                btnCreateUser.Visibility = Visibility.Hidden;
+            }
         }
 
         private void btnAddCardToUser_Click(object sender, RoutedEventArgs e)
@@ -213,7 +210,7 @@ namespace Server
 
         private void btnAddCard_Click(object sender, RoutedEventArgs e)
         {
-            if(addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
+            if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
             if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "ADD CARD TO USER";
             txtDisplay.Visibility = Visibility.Hidden;
@@ -239,7 +236,7 @@ namespace Server
             if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
             if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
-            txtDisplay.Visibility = Visibility.Visible;        
+            txtDisplay.Visibility = Visibility.Visible;
         }
     }
 }
