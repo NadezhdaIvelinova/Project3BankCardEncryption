@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 
 namespace Server
 {
+    //Class responsible for serialization/deserialization object from XML file from type User
     public class Users
     {
         [XmlElement("User", typeof(User))]

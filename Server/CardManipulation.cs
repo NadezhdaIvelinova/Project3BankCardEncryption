@@ -9,15 +9,20 @@ namespace Server
     //Encrypt bank card using Route Cipher algorithm
     public class CardManipulation
     {
+        #region Data members
         private static int key;
+        #endregion
 
+        #region Constructors
         public CardManipulation(int keyForEncryption)
         {
             Key = keyForEncryption % 16;
         }
+        #endregion
 
-        public int Key 
-        { 
+        #region Properties
+        public int Key
+        {
             get
             {
                 return key;
@@ -27,9 +32,11 @@ namespace Server
                 key = value;
             }
         }
+        #endregion
 
+        #region Utility methods
         public string Encrypt(string plainText)
-        { 
+        {
             char[] plainTextChars = plainText.ToCharArray();
             int numOfColumns = Math.Abs(Key);
             int numOfRows = plainTextChars.Length / Math.Abs(Key);
@@ -116,88 +123,11 @@ namespace Server
                     }
                     startRowIndex++;
                 }
-                
+
             }
             return new string(cipherText);
 
-        }
-
-        public string Decrypt(string cipherText, int realLength)
-        {
-            char[] cipherTextChars = cipherText.ToCharArray();
-            int numberOfColumns = Math.Abs(Key);
-            int numberOfRows = cipherText.Length / numberOfColumns;
-            char[,] grid = new char[numberOfRows, numberOfColumns];
-
-            //Counterclockwise from top left corner
-            int startRowIndex = 0;
-            int endRowIndex = numberOfRows;
-            int startColumnIndex = 0;
-            int endColumnIndex = numberOfColumns;
-            int index;
-            int cnt = 0;
-            int total = endColumnIndex * endRowIndex;
-            while (startRowIndex < endRowIndex && startColumnIndex < endColumnIndex)
-            {
-                if (cnt == total)
-                    break;
-
-                for (index = startRowIndex; index < endRowIndex; ++index)
-                {
-                    grid[index, startColumnIndex] = cipherTextChars[cnt];
-                    cnt++;
-                }
-                startColumnIndex++;
-
-                if (cnt == total)
-                    break;
-
-                for (index = startColumnIndex; index < endColumnIndex; ++index)
-                {
-                    grid[endRowIndex - 1, index] = cipherTextChars[cnt];
-                    cnt++;
-                }
-                endRowIndex--;
-
-                if (cnt == total)
-                    break;
-
-                if (startRowIndex < endRowIndex)
-                {
-                    for (index = endRowIndex - 1; index >= startRowIndex; --index)
-                    {
-                        grid[index, endColumnIndex - 1] = cipherTextChars[cnt];
-                        cnt++;
-                    }
-                    endColumnIndex--;
-                }
-
-                if (cnt == total)
-                    break;
-
-                if (startColumnIndex < endColumnIndex)
-                {
-                    for (index = endColumnIndex - 1; index >= startColumnIndex; --index)
-                    {
-                        grid[startRowIndex, index] = cipherTextChars[cnt];
-                        cnt++;
-                    }
-                    startRowIndex++;
-                }              
-            }
-            char[] plaintext = new char[numberOfRows * numberOfColumns];
-            int counter = 0;
-            for (int i = 0; i < numberOfRows; i++)
-            {
-                for (int j = 0; j < numberOfColumns; j++)
-                {
-                    plaintext[counter] = grid[i, j];
-                    counter++;
-                }
-            }
-            string decrypted = new string(plaintext);
-            return decrypted.Substring(0, realLength);
-        }
-
+        }        
+        #endregion
     }
 }

@@ -27,14 +27,16 @@ namespace Server
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Data members
         private Thread incomingThread; //Thread for processing incoming queries
-        private int counter;
+        private int counter; //Count number of connections
         private Dictionary<Thread, Socket> connections;
         private Dictionary<Thread, BinaryWriter> writers;
-        private Dictionary<Thread, int> numberOfEcryptionsPerUser;
-        private Dictionary<string, List<string>> cardAndEncryptions;
+        private Dictionary<Thread, int> numberOfEcryptionsPerUser; //Collect number of encryptions for each user
+        private Dictionary<string, List<string>> cardAndEncryptions; //Collect all card and their encryptions
         private Users registeredUsers;
-        private static int KEY = 5;
+        private static int KEY = 5; //Key for encryption 
+        #endregion
 
         public MainWindow()
         {
@@ -54,12 +56,14 @@ namespace Server
                 registeredUsers = (Users)serializer.Deserialize(reader);
             }
 
+            //Add all deserialized cards to collector of card and encryptions
             foreach (var user in registeredUsers.User)
             {
                 cardAndEncryptions.Add(user.Card, new List<string>());
             }
         }
 
+        #region Connection methods
         public void RunServer()
         {
             TcpListener listener;
@@ -119,10 +123,11 @@ namespace Server
                 try
                 {
                     clientReply = reader.ReadString();
+                    //Check if client request is for authentication
                     if (clientReply.Contains("Credentials"))
                     {
                         username = GetCredentials(clientReply).Item1;
-                        string password = GetCredentials(clientReply).Item2;                        
+                        string password = GetCredentials(clientReply).Item2;
 
                         DisplayMessage("\r\nUser " + username + " has entered in his account");
 
@@ -136,40 +141,46 @@ namespace Server
                             break;
                         }
                     }
+                    //Check if the client request is for encryption
                     else if (clientReply.Contains("Encrypt"))
                     {
                         string[] tokens = clientReply.Split(' ');
                         string cardToEncrypt = tokens[1];
 
+                        //Check if the client has permissions to encrypt
                         if (registeredUsers.User.Any(x => x.Username == username && x.Permission == User.Permissions.GUEST))
                         {
                             writer.Write("SERVER >>> Cannot make encryption from guest account.");
                         }
+                        //Chack if this card belongs to the client
                         else if (!registeredUsers.User.Any(x => x.Username == username && x.Card == cardToEncrypt))
                         {
                             writer.Write("SERVER >>> Invalid card number");
                         }
                         else
                         {
+                            //Check number of encryptions
                             if (numberOfEcryptionsPerUser[Thread.CurrentThread] == 11)
                             {
                                 writer.Write("SERVER >>> Cannot make more than 12 encryptions");
                             }
                             else
                             {
-                                string encryption = Encrypt(cardToEncrypt, numberOfEcryptionsPerUser[Thread.CurrentThread]);
-                                cardAndEncryptions[cardToEncrypt].Add(encryption);
-                                writer.Write(encryption);
+                                string encryption = Encrypt(cardToEncrypt, numberOfEcryptionsPerUser[Thread.CurrentThread]); //Create encryption
+                                cardAndEncryptions[cardToEncrypt].Add(encryption); //Add encryption to the collector of cards and their encryptions
+                                writer.Write(encryption); //Return the encryption to the client
                                 numberOfEcryptionsPerUser[Thread.CurrentThread]++;
                             }
                         }
                     }
+                    //Check if the client request is for decryption
                     else if (clientReply.Contains("Decrypt"))
                     {
                         string[] tokens = clientReply.Split(' ');
-                        string cardToDecrypt = tokens[1];                       
-                        User user = registeredUsers.User.Where(x => x.Username == username).First();                       
-                       
+                        string cardToDecrypt = tokens[1];
+                        User user = registeredUsers.User.Where(x => x.Username == username).First();
+
+                        //Check user permissions for decrypting this card
                         if (cardAndEncryptions[user.Card].Contains(cardToDecrypt))
                         {
                             writer.Write(user.Card);
@@ -185,6 +196,7 @@ namespace Server
                     break;
                 }
             } while (clientReply != "CLIENT>>> TERMINATE" && connection.Connected);
+
             lock (this)
             {
                 counter--;
@@ -197,8 +209,11 @@ namespace Server
             reader?.Close();
             socketStream?.Close();
             connection?.Close();
-        }
+        } 
+        #endregion
 
+        #region Methods for managing user interface and user actions
+        //Display messages in the information logger
         private void DisplayMessage(string message)
         {
             //Check if modifying txtDisplay is not thread safe
@@ -219,18 +234,20 @@ namespace Server
             System.Environment.Exit(System.Environment.ExitCode);
         }
 
+        //Add new user in the system
         private void btnAddUser_Click(object sender, RoutedEventArgs e)
         {
-            if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
-            if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
+            //Manage GUI
             txtInfo.Text = "CREATE NEW USER ACCOUNT";
             txtDisplay.Visibility = Visibility.Hidden;
             addUserForm.Visibility = Visibility.Visible;
             btnCreateUser.Visibility = Visibility.Visible;
         }
 
+        //Create new user account
         private void btnCreateUser_Click(object sender, RoutedEventArgs e)
         {
+            //Check for valid input
             if (!Validation.ValidateCredentials(txtUsername.Text, txtPassword.Password))
             {
                 MessageBox.Show("Username and Password must contain only letters, digits and underscore.", "Invalid credentials");
@@ -261,9 +278,10 @@ namespace Server
                     ));
                 xmlDoc.Save("Users.xml");
 
-                registeredUsers.User.Add(user);
-                cardAndEncryptions.Add(user.Card, new List<string>());
+                registeredUsers.User.Add(user); //Add user to registered users in the system
+                cardAndEncryptions.Add(user.Card, new List<string>()); //Add user card in card collector
 
+                //Manage GUI
                 txtInfo.Text = "INFORMATION LOGGER";
                 txtDisplay.Visibility = Visibility.Visible;
                 addUserForm.Visibility = Visibility.Hidden;
@@ -271,51 +289,37 @@ namespace Server
             }
         }
 
-        private void btnAddCardToUser_Click(object sender, RoutedEventArgs e)
-        {
-            txtInfo.Text = "INFORMATION LOGGER";
-            txtDisplay.Visibility = Visibility.Visible;
-            addCardToUser.Visibility = Visibility.Hidden;
-            btnAddCardToUser.Visibility = Visibility.Hidden;
-        }
-
-        private void btnAddCard_Click(object sender, RoutedEventArgs e)
-        {
-            if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
-            if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
-            txtInfo.Text = "ADD CARD TO USER";
-            txtDisplay.Visibility = Visibility.Hidden;
-            addCardToUser.Visibility = Visibility.Visible;
-            btnAddCardToUser.Visibility = Visibility.Visible;
-
-        }
-
+        //Sort encryptions and cards by encryption and save them to file
         private void btnSortByEncryptionNumber_Click(object sender, RoutedEventArgs e)
         {
+            //Manage GUI
             if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
             if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
-            if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
-            if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
 
+            //Helping method for sorting and saving
             WriteSortedByEncryption();
             DisplayMessage("Successfully sorted by encryption\n");
         }
 
+        //Sort encryptions and cards by card number and save them to file
         private void btnSortByCardNumber_Click(object sender, RoutedEventArgs e)
         {
+            //Manage GUI
             if (addUserForm.Visibility == Visibility.Visible) addUserForm.Visibility = Visibility.Hidden;
             if (btnCreateUser.Visibility == Visibility.Visible) btnCreateUser.Visibility = Visibility.Hidden;
-            if (addCardToUser.Visibility == Visibility.Visible) addCardToUser.Visibility = Visibility.Hidden;
-            if (btnAddCardToUser.Visibility == Visibility.Visible) btnAddCardToUser.Visibility = Visibility.Hidden;
             txtInfo.Text = "INFORMATION LOGGER";
             txtDisplay.Visibility = Visibility.Visible;
 
+            //Helping method for sorting and saving
             WriteSortedByCardNumber();
             DisplayMessage("Successfully sorted by card number\n");
         }
+        #endregion
 
+        #region Helping methods
+        //Helping method for getting user credentials
         private (string, string) GetCredentials(string reply)
         {
             string[] tokens = reply.Split(' ');
@@ -324,6 +328,7 @@ namespace Server
             return (username, password);
         }
 
+        //Helping method for encrypting 
         private string Encrypt(string card, int numberOfEcryptions)
         {
             CardManipulation encryption;
@@ -340,6 +345,7 @@ namespace Server
             }
         }
 
+        //Helping method for sorting by encryption and saving
         private void WriteSortedByEncryption()
         {
 
@@ -363,6 +369,7 @@ namespace Server
             }
         }
 
+        //Helping method for sorting by card number and saving
         private void WriteSortedByCardNumber()
         {
             var tupleList = new List<(string, string)>();
@@ -383,6 +390,7 @@ namespace Server
                     file.WriteLine(record);
                 }
             }
-        }
+        } 
+        #endregion
     }
 }

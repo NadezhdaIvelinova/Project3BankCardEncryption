@@ -7,19 +7,21 @@
         xmlns:AddUserForm1="clr-namespace:AddUserForm;assembly=AddUserForm"
         xmlns:AddCardToUserForm11="clr-namespace:AddCardToUserForm;assembly=AddCardToUserForm"
         mc:Ignorable="d"
-        Title="Bank Card Encryption - Server" Height="500" Width="560" Closing="Window_Closing">
+        Title="Bank Card Encryption - Server" Height="500" Width="500" Closing="Window_Closing">
     <Grid>       
         <StackPanel>
-            <StackPanel Orientation="Horizontal"  Width="540" Margin="0 25 0 0">
-                <Button x:Name="btnAddUser" Content="Add user" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnAddUser_Click"/>
-                <Button x:Name="btnAddCard" Content="Add card" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnAddCard_Click"/>
+            <!--Menu with basic options-->
+            <StackPanel Orientation="Horizontal"  Width="450" Margin="0 25 0 0">
+                <Button x:Name="btnAddUser" Content="Add user" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnAddUser_Click"/>               
                 <Button x:Name="btnSortByEncryptionNumber" Content="Sort by encryption" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnSortByEncryptionNumber_Click"/>
                 <Button x:Name="btnSortByCardNumber" Content="Sort by card number" Padding="5" Margin="10" Background="#217b9e" BorderBrush="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Cursor="Hand" Click="btnSortByCardNumber_Click"/>
             </StackPanel>
             <Separator Margin="20 5 20 5"/>
+            <!--Information logger-->
             <TextBlock x:Name="txtInfo" Text="INFORMATION LOGGER" FontSize="16" FontWeight="Bold" Foreground="#217b9e" HorizontalAlignment="Center" Margin="5"/>
             <TextBox x:Name="txtDisplay" Height="300" Margin="10" TextWrapping="Wrap" VerticalAlignment="Top" Width="430" VerticalScrollBarVisibility="Auto" FontWeight="Bold" AcceptsReturn="True" AcceptsTab="True"/>
         </StackPanel>
+        <!--Form for creating an user account-->
         <StackPanel Height="300" Width="420" Margin="30,100,30,20" x:Name="addUserForm" Visibility="Hidden">
             <StackPanel Margin="5">
                 <StackPanel Orientation="Horizontal">
@@ -41,21 +43,13 @@
                     <ComboBoxItem Content="User"/>
                     <ComboBoxItem Content="Guest"/>
                 </ComboBox>
-                <TextBlock Text="Bank card number" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Bank card number" Margin="5" FontSize="16" FontWeight="DemiBold"/>
+                    <TextBlock Text="*" FontSize="16" FontWeight="DemiBold" Foreground="Red" Margin="0 0 5 0"/>
+                </StackPanel>                
                 <TextBox x:Name="txtCardNumber" Margin="5 0 5 0" Padding="5" FontSize="14"/>
             </StackPanel>
             <Button x:Name="btnCreateUser" Content="Create user account" Background="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Height="40" BorderBrush="#217b9e" Padding="5" Width="200" Margin="10 10 10 10" Click="btnCreateUser_Click" Cursor="Hand"/>
-        </StackPanel>
-        <StackPanel Height="300" Width="410" Margin="67,140,66.6,0" x:Name="addCardToUser" Visibility="Hidden">
-            <StackPanel Margin="10">
-                <TextBlock  Text="Username" Margin="0 10 5 0" FontSize="16" FontWeight="DemiBold"/>
-                <TextBox x:Name="txtUsernameAddCard" Padding="5" FontSize="14" Margin="0 0 5 10"/>
-                <TextBlock  Text="Bank Card Number" Margin="0 10 5 0" FontSize="16" FontWeight="DemiBold"/>
-                <TextBox x:Name="txtCardNumberToAdd" Padding="5" FontSize="14" Margin="0 0 5 10"/>
-            </StackPanel>
-            <Button x:Name="btnAddCardToUser" Content="Add card to user" Background="#217b9e" Foreground="White" FontSize="16" FontWeight="DemiBold" Height="40" BorderBrush="#217b9e" Padding="5" Width="200" Margin="10 10 10 10" Cursor="Hand" Click="btnAddCardToUser_Click"/>
-        </StackPanel>
-        
-        
-    </Grid>
+        </StackPanel>      
+     </Grid>
 </Window>

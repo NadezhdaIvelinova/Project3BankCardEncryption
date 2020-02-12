@@ -24,11 +24,14 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Data members
         private NetworkStream output; //stream for receiving data
         private BinaryWriter writer;
         private BinaryReader reader;
         private Thread readThread;
-        private string message = "";
+        private string message = ""; 
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
@@ -43,8 +46,6 @@ namespace Client
             //instantiate TcpClient for sending data to server
             try
             {
-                DisplayMessage("Attempting connection\r\n");
-
                 //Create TcpClient for sending data to server
                 client = new TcpClient();
                 client.Connect("127.0.0.1", 50000);
@@ -57,13 +58,13 @@ namespace Client
                 reader = new BinaryReader(output);
                 
 
-                // loop until server signals termination
+                //Loop until server signals termination
                 do
                 {
-                    // Processing phase
+                    //Processing phase
                     try
                     {
-                        // read message from server        
+                        //Read message from server        
                         message = reader.ReadString();
                         if(message.Equals("SERVER >>> Successful Authentication"))
                         {
@@ -71,30 +72,33 @@ namespace Client
                             ShowOperationsPanel();
                             
                         }
+                        //Check user permissions
                         if(message.Equals("SERVER >>> Cannot make encryption from guest account."))
                         {
                             MessageBox.Show("Cannot make encryptions from guest account.", "Unauthorized Operation");
                         }
+                        //Check user card
                         if(message.Equals("SERVER >>> Invalid card number"))
                         {
                             MessageBox.Show("The card number you have entered is incorrect. Check if this is your card number.", "Invalid Card Number");
                             
                         }
+                        //Chech number of times user have encrypted his card
                         if (message.Equals("SERVER >>> Cannot make more than 12 encryptions"))
                         {
                             MessageBox.Show("You cannot make more than 12 ecryptions per card.", "Invalid Operation");
 
                         }
+                        //Check permissions for decrypt
                         if(message.Equals("SERVER >>> Cannot decrypt this card."))
                         {
                             MessageBox.Show("You have no permissions to decrypt this card. Check if this is your card encryption.", "Invalid Operation");
                         }
+                        //Get encryption/Decryption
                         if (Regex.IsMatch(message, @"^[0-9]+$"))
                         {
                             DisplayOutput(message);
-                        }
-                       
-                        DisplayMessage("\r\n" + message);
+                        }                      
                     } 
                     catch (Exception)
                     {
@@ -119,20 +123,8 @@ namespace Client
             }
         }
 
-        private void DisplayMessage(string message)
-        {
-            //Check if modifying txtDisplay is not thread safe
-            if (!txtDisplay.Dispatcher.CheckAccess())
-            {
-                // use inherited method Invoke to execute DisplayMessage via a delegate                                       
-                txtDisplay.Dispatcher.Invoke(new Action(() => txtDisplay.Text += message));
-            }
-            else
-            {
-                txtDisplay.Text += message;
-            }
-        }
-
+        #region Methods for managing user interface and user interactions
+        //Manage UI - hide Login Panel
         private void HideLoginPanels()
         {
             //Check if modifying txtDisplay is not thread safe
@@ -146,6 +138,8 @@ namespace Client
                 LoginPanel.Visibility = Visibility.Collapsed;
             }
         }
+
+        //Manage UI - show Operations Panel
         private void ShowOperationsPanel()
         {
             //Check if modifying txtDisplay is not thread safe
@@ -160,6 +154,7 @@ namespace Client
             }
         }
 
+        //Manage UI - display server response for encryption/decryption
         private void DisplayOutput(string message)
         {
             //Check if modifying txtDisplay is not thread safe
@@ -180,6 +175,7 @@ namespace Client
             System.Environment.Exit(System.Environment.ExitCode);
         }
 
+        //Login to user account
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -194,18 +190,19 @@ namespace Client
             }
         }
 
+        //Calculate encryption/decryption
         private void btnCalculate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if(cmbOperation.SelectedItem.ToString().Contains("Encrypt"))
+                if (cmbOperation.SelectedItem.ToString().Contains("Encrypt"))
                 {
                     writer.Write("Encrypt" + " " + txtCardNumber.Text);
                 }
                 else
                 {
                     writer.Write("Decrypt" + " " + txtCardNumber.Text);
-                }               
+                }
             }
             catch (SocketException)
             {
@@ -213,11 +210,13 @@ namespace Client
             }
         }
 
- 
+
+        //Clear fields
         private void btnNewOperation_Click(object sender, RoutedEventArgs e)
         {
             txtCardNumber.Clear();
             txtOutput.Clear();
-        }
+        } 
+        #endregion
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    //Class responsible for account and card validation
     public static class Validation
     {
         private static int AMERICANEXPRESS_LENGTH = 15; //American express card has 15 digits
